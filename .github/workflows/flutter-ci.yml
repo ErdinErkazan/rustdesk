@@ -22,3 +22,13 @@ jobs:
     uses: ./.github/workflows/flutter-build.yml
     with:
       upload-artifact: false
+      
+  upload-windows-exe:
+    needs: run-ci
+    runs-on: windows-2022
+    if: success()
+    steps:
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustdesk-windows-exe
+          path: flutter/build/windows/x64/runner/Release/*.exe
