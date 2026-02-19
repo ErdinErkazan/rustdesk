@@ -1,11 +1,11 @@
 [package]
-name = "rustdesk"
+name = "PrdRemote"
 version = "1.4.5"
-authors = ["rustdesk <info@rustdesk.com>"]
-edition = "2021"
+authors = ["prodev <prodev@prodev.com.tr>"]
+edition = "2026"
 build= "build.rs"
-description = "RustDesk Remote Desktop"
-default-run = "rustdesk"
+description = "PrdRemote Remote Desktop"
+default-run = "PrdRemote"
 rust-version = "1.75"
 
 [lib]
@@ -213,10 +213,10 @@ exclude = ["vdi/host", "examples/custom_plugin"]
 libxdo-sys = { path = "libs/libxdo-sys-stub" }
 
 [package.metadata.winres]
-LegalCopyright = "Copyright © 2025 Purslane Ltd. All rights reserved."
+LegalCopyright = "Copyright © 2026 Prodev All rights reserved."
 ProductName = "RustDesk"
-FileDescription = "RustDesk Remote Desktop"
-OriginalFilename = "rustdesk.exe"
+FileDescription = "PrdRemote Remote Desktop"
+OriginalFilename = "PrdRemote.exe"
 
 [target.'cfg(target_os="windows")'.build-dependencies]
 winres = "0.1"
