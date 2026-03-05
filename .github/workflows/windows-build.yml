@@ -45,16 +45,24 @@ jobs:
       - name: Generate bridge (generated_bridge.dart)
         run: flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
 
+      - name: Build Rust DLL (release)
+        run: cargo build --release
+
+      - name: Show built Rust DLLs
+        shell: powershell
+        run: |
+          Write-Host "=== release dlls ==="
+          Get-ChildItem -Path .\target\release\*.dll -ErrorAction SilentlyContinue | Format-Table Name, Length
+          Write-Host "=== debug dlls ==="
+          Get-ChildItem -Path .\target\debug\*.dll -ErrorAction SilentlyContinue | Format-Table Name, Length
+
       - name: Build Windows Release EXE
         run: |
           cd flutter
           flutter build windows --release
 
-      - name: Show built Rust DLLs
-        run: |
-          dir .\target\release\*.dll
-          dir .\target\debug\*.dll
-
+      
+        
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
         with:
