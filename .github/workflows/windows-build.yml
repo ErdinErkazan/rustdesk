@@ -31,7 +31,7 @@ jobs:
         run: |
           cd flutter
           flutter clean
-          
+
       - name: Flutter pub get
         run: |
           cd flutter
@@ -49,6 +49,11 @@ jobs:
         run: |
           cd flutter
           flutter build windows --release
+
+      - name: Show built Rust DLLs
+        run: |
+          dir .\target\release\*.dll
+          dir .\target\debug\*.dll
 
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
