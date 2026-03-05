@@ -31,7 +31,12 @@ jobs:
         run: |
           cd flutter
           flutter pub get
-
+          
+      - name: Flutter clean
+        run: |
+          cd flutter
+          flutter clean
+          
       - name: Install flutter-rust-bridge codegen
         run: cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
 
