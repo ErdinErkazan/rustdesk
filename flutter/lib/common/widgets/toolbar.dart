@@ -540,13 +540,13 @@ Future<List<TToggleMenu>> toolbarCursor(
           if (value == null) return;
           await bind.sessionToggleOption(sessionId: sessionId, value: option);
           value = bind.sessionGetToggleOptionSync(
-              sessionId: sessionId, arg: option);
+    sessionId: sessionId, arg: option) ?? false;
           showCursorLockState.value = value;
           if (!showCursorEnabled) {
             await bind.sessionToggleOption(
                 sessionId: sessionId, value: showCursorOption);
             showCursorState.value = bind.sessionGetToggleOptionSync(
-                sessionId: sessionId, arg: showCursorOption);
+    sessionId: sessionId, arg: showCursorOption) ?? false;
           }
         }));
   }
