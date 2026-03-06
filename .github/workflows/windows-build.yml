@@ -28,9 +28,12 @@ jobs:
       - name: Install opus via vcpkg
         shell: powershell
         run: |
-          $env:VCPKG_ROOT = "${{ github.workspace }}\vcpkg"
-          echo "VCPKG_ROOT=$env:VCPKG_ROOT" >> $env:GITHUB_ENV
-          & "$env:VCPKG_ROOT\vcpkg.exe" install opus:x64-windows-static
+          $vcpkg = "${{ runner.tool_cache }}\vcpkg\current\x64-windows\vcpkg.exe"
+          if (!(Test-Path $vcpkg)) {
+            $vcpkg = "${{ github.workspace }}\vcpkg\vcpkg.exe"
+          }
+          echo "Using vcpkg at $vcpkg"
+          & $vcpkg install opus:x64-windows-static
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
