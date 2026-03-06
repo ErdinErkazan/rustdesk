@@ -659,10 +659,10 @@ async fn test_nat_type_() -> ResultType<bool> {
                     port2 = tnr.port;
                 }
                 if let Some(cu) = tnr.cu.as_ref() {
-                    Config::set_option(
-                        "rendezvous-servers".to_owned(),
-                        cu.rendezvous_servers.join(","),
-                    );
+                  //  Config::set_option(
+                  //      "rendezvous-servers".to_owned(),
+                  //      cu.rendezvous_servers.join(","),
+                  //  );
                     Config::set_serial(cu.serial);
                 }
             }
@@ -939,16 +939,20 @@ pub fn is_modifier(evt: &KeyEvent) -> bool {
     }
 }
 
-pub fn check_software_update() {
-    if is_custom_client() {
-        return;
-    }
-    let opt = LocalConfig::get_option(keys::OPTION_ENABLE_CHECK_UPDATE);
-    if config::option2bool(keys::OPTION_ENABLE_CHECK_UPDATE, &opt) {
-        std::thread::spawn(move || allow_err!(do_check_software_update()));
-    }
-}
+//pub fn check_software_update() {
+//    if is_custom_client() {
+//        return;
+//    }
+//    let opt = LocalConfig::get_option(keys::OPTION_ENABLE_CHECK_UPDATE);
+//    if config::option2bool(keys::OPTION_ENABLE_CHECK_UPDATE, &opt) {
+//        std::thread::spawn(move || allow_err!(do_check_software_update()));
+//    }
+//}
 
+pub fn check_software_update() {
+    // PdRemote: disable software update checks completely
+    return;
+}
 // No need to check `danger_accept_invalid_cert` for now.
 // Because the url is always `https://api.rustdesk.com/version/latest`.
 #[tokio::main(flavor = "current_thread")]

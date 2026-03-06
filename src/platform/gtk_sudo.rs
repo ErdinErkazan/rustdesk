@@ -48,7 +48,8 @@ pub fn run(cmds: Vec<&str>) -> ResultType<()> {
     let mut args = vec!["-gtk-sudo", mod_arg];
     args.append(&mut cmds.clone());
     let mut child = crate::run_me(args)?;
-    let exit_status = child.wait()?;
+    let exit_stat
+    us = child.wait()?;
     if exit_status.success() {
         Ok(())
     } else {
