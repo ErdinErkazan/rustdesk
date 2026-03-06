@@ -32,7 +32,6 @@ jobs:
           echo "VCPKG_ROOT=$env:VCPKG_ROOT" >> $env:GITHUB_ENV
           & "$env:VCPKG_ROOT\vcpkg.exe" install opus:x64-windows-static
 
-
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -49,8 +48,6 @@ jobs:
         run: |
           cd flutter
           flutter pub get
-          
-
 
       - name: Install flutter-rust-bridge codegen
         run: cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
@@ -74,8 +71,6 @@ jobs:
           cd flutter
           flutter build windows --release
 
-      
-        
       - name: Upload EXE Artifact
         uses: actions/upload-artifact@v4
         with:
