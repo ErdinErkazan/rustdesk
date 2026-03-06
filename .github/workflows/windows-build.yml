@@ -33,7 +33,7 @@ jobs:
             $vcpkg = "${{ github.workspace }}\vcpkg\vcpkg.exe"
           }
           echo "Using vcpkg at $vcpkg"
-          & $vcpkg install --classic opus:x64-windows-static
+          & $vcpkg install --classic opus:x64-windows-static libvpx:x64-windows-static libyuv:x64-windows-static
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
