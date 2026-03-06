@@ -455,7 +455,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   //        link: isToUpdate
   //            ? 'https://github.com/rustdesk/rustdesk/releases/tag/${bind.mainGetNewVersion()}'
   //            : null);
-  // }
+   }
   return const SizedBox.shrink();
 
 
