@@ -1,0 +1,78 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Init submodules
+        run: git submodule update --init --recursive
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: "1.75"
+          components: rustfmt
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: "ce613c41372b23b1f51333815feb3edd87ef8a8b"
+
+      - name: Install opus via vcpkg
+        shell: powershell
+        run: |
+          $env:VCPKG_ROOT = "${{ github.workspace }}\vcpkg"
+          echo "VCPKG_ROOT=$env:VCPKG_ROOT" >> $env:GITHUB_ENV
+          & "$env:VCPKG_ROOT\vcpkg.exe" install opus:x64-windows-static
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+          cache: true
+
+      - name: Flutter clean
+        run: |
+          cd flutter
+          flutter clean
+
+      - name: Flutter pub get
+        run: |
+          cd flutter
+          flutter pub get
+
+      - name: Install flutter-rust-bridge codegen
+        run: cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
+
+      - name: Generate bridge (generated_bridge.dart)
+        run: flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
+
+      - name: Build Rust DLL (release)
+        run: cargo build --release
+
+      - name: Show built Rust DLLs
+        shell: powershell
+        run: |
+          Write-Host "=== release dlls ==="
+          Get-ChildItem -Path .\target\release\*.dll -ErrorAction SilentlyContinue | Format-Table Name, Length
+          Write-Host "=== debug dlls ==="
+          Get-ChildItem -Path .\target\debug\*.dll -ErrorAction SilentlyContinue | Format-Table Name, Length
+
+      - name: Build Windows Release EXE
+        run: |
+          cd flutter
+          flutter build windows --release
+
+      - name: Upload EXE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PdRemote-Windows-EXE
+          path: flutter/build/windows/x64/runner/Release/*.exe

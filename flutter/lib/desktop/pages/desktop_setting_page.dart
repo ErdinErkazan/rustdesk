@@ -521,7 +521,14 @@ class _GeneralState extends State<_General> {
               isServer: false,
             ),
           ),
-        if (!isWeb && !bind.isCustomClient())
+      //  if (!isWeb && !bind.isCustomClient())
+      //    _OptionCheckBox(
+      //      context,
+      //      'Check for software update on startup',
+      //      kOptionEnableCheckUpdate,
+      //      isServer: false,
+      //    ),
+        if (false)
           _OptionCheckBox(
             context,
             'Check for software update on startup',
