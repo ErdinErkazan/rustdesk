@@ -521,13 +521,6 @@ class _GeneralState extends State<_General> {
               isServer: false,
             ),
           ),
-      //  if (!isWeb && !bind.isCustomClient())
-      //    _OptionCheckBox(
-      //      context,
-      //      'Check for software update on startup',
-      //      kOptionEnableCheckUpdate,
-      //      isServer: false,
-      //    ),
         if (false)
           _OptionCheckBox(
             context,
@@ -1655,20 +1648,13 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (false)
-                listTile(
-                  icon: Icons.dns_outlined,
-                  title: 'ID/Relay Server',
-                  onTap: () => showServerSettings(gFFI.dialogManager, setState),
-                ),
-              if (!hideProxy && !hideServer) divider,
               if (!hideProxy)
                 listTile(
                   icon: Icons.network_ping_outlined,
                   title: 'Socks5/Http(s) Proxy',
                   onTap: changeSocks5Proxy,
                 ),
-              if (!hideWebSocket && (!hideServer || !hideProxy)) divider,
+              if (!hideWebSocket && !hideProxy) divider,
               if (!hideWebSocket)
                 switchWidget(
                     Icons.web_asset_outlined,
@@ -1684,8 +1670,7 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
                     } else {
                       return Column(
                         children: [
-                          if (!hideServer || !hideProxy || !hideWebSocket)
-                            divider,
+                          if (!hideProxy || !hideWebSocket) divider,
                           switchWidget(
                               Icons.no_encryption_outlined,
                               'Allow insecure TLS fallback',

@@ -430,34 +430,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Widget buildHelpCards(String updateUrl) {
-    if (!bind.isCustomClient() &&
+    final shouldHideUpdateCard = !bind.isCustomClient() &&
         updateUrl.isNotEmpty &&
         !isCardClosed &&
-        bind.mainUriPrefixSync().contains('rustdesk')) {
-      final isToUpdate = (isWindows || isMacOS) && bind.mainIsInstalled();
-      String btnText = isToUpdate ? 'Update' : 'Download';
-      GestureTapCallback onPressed = () async {
-        final Uri url = Uri.parse('https://rustdesk.com/download');
-        await launchUrl(url);
-      };
-      if (isToUpdate) { 
-        onPressed = () {
-          handleUpdate(updateUrl);
-        };
-      }
-  //    return buildInstallCard(
-  //        "Status",
-  //        "${translate("new-version-of-{${bind.mainGetAppNameSync()}}-tip")} (${bind.mainGetNewVersion()}).",
-  //        btnText,
-  //        onPressed,
-  //        closeButton: true,
-  //        help: isToUpdate ? 'Changelog' : null,
-  //        link: isToUpdate
-  //            ? 'https://github.com/rustdesk/rustdesk/releases/tag/${bind.mainGetNewVersion()}'
-  //            : null);
-   }
-  return const SizedBox.shrink();
+        bind.mainUriPrefixSync().contains('rustdesk');
 
+    if (shouldHideUpdateCard) {
+      return const SizedBox.shrink();
+    }
 
     if (systemError.isNotEmpty) {
       return buildInstallCard("", systemError, "", () {});
@@ -507,22 +487,12 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           bind.mainIsInstalledDaemon(prompt: true);
         });
       }
-      //// Disable microphone configuration for macOS. We will request the permission when needed.
-      // else if ((await osxCanRecordAudio() !=
-      //     PermissionAuthorizeType.authorized)) {
-      //   return buildInstallCard("Permissions", "config_microphone", "Configure",
-      //       () async {
-      //     osxRequestAudio();
-      //     watchIsCanRecordAudio = true;
-      //   });
-      // }
     } else if (isLinux) {
       if (bind.isOutgoingOnly()) {
         return Container();
       }
       final LinuxCards = <Widget>[];
       if (bind.isSelinuxEnforcing()) {
-        // Check is SELinux enforcing, but show user a tip of is SELinux enabled for simple.
         final keyShowSelinuxHelpTip = "show-selinux-help-tip";
         if (bind.mainGetLocalOption(key: keyShowSelinuxHelpTip) != 'N') {
           LinuxCards.add(buildInstallCard(
@@ -563,8 +533,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         alignment: Alignment.centerRight,
         child: OutlinedButton(
           onPressed: () {
-            SystemNavigator.pop(); // Close the application
-            // https://github.com/flutter/flutter/issues/66631
+            SystemNavigator.pop();
             if (isWindows) {
               exit(0);
             }
@@ -727,10 +696,6 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       if (watchIsInputMonitoring) {
         if (bind.mainIsCanInputMonitoring(prompt: false)) {
           watchIsInputMonitoring = false;
-          // Do not notify for now.
-          // Monitoring may not take effect until the process is restarted.
-          // rustDeskWinManager.call(
-          //     WindowType.RemoteDesktop, kWindowDisableGrabKeyboard, '');
           setState(() {});
         }
       }
@@ -770,7 +735,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
     bool isChattyMethod(String methodName) {
       switch (methodName) {
-        case kWindowBumpMouse: return true;
+        case kWindowBumpMouse:
+          return true;
       }
 
       return false;
@@ -779,7 +745,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     rustDeskWinManager.setMethodHandler((call, fromWindowId) async {
       if (!isChattyMethod(call.method)) {
         debugPrint(
-          "[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
+            "[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
       }
       if (call.method == kWindowMainWindowOnTop) {
         windowOnTop(null);
@@ -815,8 +781,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         );
       } else if (call.method == kWindowBumpMouse) {
         return RdPlatformChannel.instance.bumpMouse(
-          dx: call.arguments['dx'],
-          dy: call.arguments['dy']);
+            dx: call.arguments['dx'], dy: call.arguments['dy']);
       } else if (call.method == kWindowEventMoveTabToNewWindow) {
         final args = call.arguments.split(',');
         int? windowId;
@@ -921,7 +886,6 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
     DigitValidationRule(),
     UppercaseValidationRule(),
     LowercaseValidationRule(),
-    // SpecialCharacterValidationRule(),
     MinCharactersValidationRule(8),
   ];
   final maxLength = bind.mainMaxEncryptLen();

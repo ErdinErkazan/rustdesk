@@ -263,7 +263,6 @@ class MyTheme {
   static const Color button = Color(0xFF2C8CFF);
   static const Color hoverBorder = Color(0xFF999999);
 
-  // ListTile
   static const ListTileThemeData listTileTheme = ListTileThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(
@@ -282,7 +281,6 @@ class MyTheme {
         splashRadius: (isDesktop || isWebDesktop) ? 0 : kRadialReactionRadius);
   }
 
-  // Checkbox
   static const CheckboxThemeData checkboxTheme = CheckboxThemeData(
     splashRadius: 0,
     shape: RoundedRectangleBorder(
@@ -292,12 +290,8 @@ class MyTheme {
     ),
   );
 
-  // TextButton
-  // Value is used to calculate "dialog.actionsPadding"
   static const double mobileTextButtonPaddingLR = 20;
 
-  // TextButton on mobile needs a fixed padding, otherwise small buttons
-  // like "OK" has a larger left/right padding.
   static TextButtonThemeData mobileTextButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
       padding: EdgeInsets.symmetric(horizontal: mobileTextButtonPaddingLR),
@@ -307,24 +301,19 @@ class MyTheme {
     ),
   );
 
-  //tooltip
   static TooltipThemeData tooltipTheme() {
     return TooltipThemeData(
       waitDuration: Duration(seconds: 1, milliseconds: 500),
     );
   }
 
-  // Dialogs
   static const double dialogPadding = 24;
 
-  // padding bottom depends on content (some dialogs has no content)
   static EdgeInsets dialogTitlePadding({bool content = true}) {
     final double p = dialogPadding;
-
     return EdgeInsets.fromLTRB(p, p, p, content ? 0 : p);
   }
 
-  // padding bottom depends on actions (mobile has dialogs without actions)
   static EdgeInsets dialogContentPadding({bool actions = true}) {
     final double p = dialogPadding;
 
@@ -372,7 +361,6 @@ class MyTheme {
   );
 
   static ThemeData lightTheme = ThemeData(
-    // https://stackoverflow.com/questions/77537315/after-upgrading-to-flutter-3-16-the-app-bar-background-color-button-size-and
     useMaterial3: false,
     brightness: Brightness.light,
     hoverColor: Color.fromARGB(255, 224, 224, 224),
@@ -470,6 +458,7 @@ class MyTheme {
       TabbarTheme.light,
     ],
   );
+
   static ThemeData darkTheme = ThemeData(
     useMaterial3: false,
     brightness: Brightness.dark,
@@ -593,7 +582,6 @@ class MyTheme {
             key: kCommConfKeyTheme, value: mode.toShortString());
       }
       if (!isWeb) await bind.mainChangeTheme(dark: mode.toShortString());
-      // Synchronize the window theme of the system.
       updateSystemWindowTheme();
     }
   }
@@ -727,7 +715,6 @@ Future<void> windowOnTop(int? id) async {
   }
   print("Bring window '$id' on top");
   if (id == null) {
-    // main window
     if (stateGlobal.isMinimized) {
       await windowManager.restore();
     }
@@ -767,7 +754,6 @@ class Dialog<T> {
 class OverlayKeyState {
   final _overlayKey = GlobalKey<OverlayState>();
 
-  /// use global overlay by default
   OverlayState? get state =>
       _overlayKey.currentState ?? globalKey.currentState?.overlay;
 
@@ -786,8 +772,6 @@ class OverlayDialogManager {
     if (store) {
       bind.setLocalFlutterOption(k: kOptionShowMobileAction, v: v ? 'Y' : 'N');
     }
-    // No need to read the value from local storage after setting it.
-    // It better to toggle the value directly.
     mobileActionsOverlayVisible.value = v;
   }
 
@@ -1045,10 +1029,6 @@ void showToast(String text,
   });
 }
 
-// TODO
-// - Remove argument "contentPadding", no need for it, all should look the same.
-// - Remove "required" for argument "content". See simple confirm dialog "delete peer", only title and actions are used. No need to "content: SizedBox.shrink()".
-// - Make dead code alive, transform arguments "onSubmit" and "onCancel" into correspondenting buttons "ConfirmOkButton", "CancelButton".
 class CustomAlertDialog extends StatelessWidget {
   const CustomAlertDialog(
       {Key? key,
@@ -1073,7 +1053,6 @@ class CustomAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // request focus
     FocusScopeNode scopeNode = FocusScopeNode();
     Future.delayed(Duration.zero, () {
       if (!scopeNode.hasFocus) scopeNode.requestFocus();
@@ -1089,7 +1068,7 @@ class CustomAlertDialog extends StatelessWidget {
           if (key is RawKeyDownEvent) {
             onCancel?.call();
           }
-          return KeyEventResult.handled; // avoid TextField exception on escape
+          return KeyEventResult.handled;
         } else if (!tabTapped &&
             onSubmit != null &&
             (key.logicalKey == LogicalKeyboardKey.enter ||
@@ -1126,7 +1105,6 @@ Widget createDialogContent(String text) {
   final RegExp linkRegExp = RegExp(r'(https?://[^\s]+)');
   bool hasLink = linkRegExp.hasMatch(text);
 
-  // Early return: no link, use default theme color
   if (!hasLink) {
     return SelectableText(text, style: const TextStyle(fontSize: 15));
   }
@@ -1181,7 +1159,6 @@ void msgBox(SessionID sessionId, String type, String title, String text,
     if (onSubmit != null) {
       onSubmit.call();
     } else {
-      // https://github.com/rustdesk/rustdesk/blob/5e9a31340b899822090a3731769ae79c6bf5f3e5/src/ui/common.tis#L263
       if (!type.contains("custom") && desktopType != DesktopType.portForward) {
         closeConnection();
       }
@@ -1230,14 +1207,12 @@ void msgBox(SessionID sessionId, String type, String title, String text,
   if (reconnect != null &&
       title == "Connection Error" &&
       reconnectTimeout != null) {
-    // `enabled` is used to disable the dialog button once the button is clicked.
     final enabled = true.obs;
     final button = Obx(() => _CountDownButton(
           text: 'Reconnect',
           second: reconnectTimeout,
           onPressed: enabled.isTrue
               ? () {
-                  // Disable the button
                   enabled.value = false;
                   reconnect(dialogManager, sessionId, false);
                 }
@@ -1298,7 +1273,6 @@ Widget msgboxIcon(String type) {
   return Offstage();
 }
 
-// title should be null
 Widget msgboxContent(String type, String title, String text) {
   String translateText(String text) {
     if (text.indexOf('Failed') == 0 && text.indexOf(': ') > 0) {
@@ -1417,10 +1391,6 @@ String readableFileSize(double size) {
   }
 }
 
-/// Flutter can't not catch PointerMoveEvent when size is 1
-/// This will happen in Android AccessibilityService Input
-/// android can't init dispatching size yet ,see: https://stackoverflow.com/questions/59960451/android-accessibility-dispatchgesture-is-it-possible-to-specify-pressure-for-a
-/// use this temporary solution until flutter or android fixes the bug
 class AccessibilityListener extends StatelessWidget {
   final Widget? child;
   static final offset = 100;
@@ -1482,13 +1452,10 @@ class AndroidPermissionManager {
     return gFFI.invokeMethod("check_permission", type);
   }
 
-  // startActivity goto Android Setting's page to request permission manually by user
   static void startAction(String action) {
     gFFI.invokeMethod(AndroidChannel.kStartAction, action);
   }
 
-  /// We use XXPermissions to request permissions,
-  /// for supported types, see https://github.com/getActivity/XXPermissions/blob/e46caea32a64ad7819df62d448fb1c825481cd28/library/src/main/java/com/hjq/permissions/Permission.java
   static Future<bool> request(String type) {
     if (isDesktop || isWeb) {
       return Future.value(true);
@@ -1496,7 +1463,6 @@ class AndroidPermissionManager {
 
     gFFI.invokeMethod("request_permission", type);
 
-    // clear last task
     if (_completer?.isCompleted == false) {
       _completer?.complete(false);
     }
@@ -1540,13 +1506,10 @@ RadioListTile<T> getRadio<T>(
   );
 }
 
-/// find ffi, tag is Remote ID
-/// for session specific usage
 FFI ffi(String? tag) {
   return Get.find<FFI>(tag: tag);
 }
 
-/// Global FFI object
 late FFI _globalFFI;
 
 FFI get gFFI => _globalFFI;
@@ -1555,7 +1518,6 @@ Future<void> initGlobalFFI() async {
   debugPrint("_globalFFI init");
   _globalFFI = FFI(null);
   debugPrint("_globalFFI init end");
-  // after `put`, can also be globally found by Get.find<FFI>();
   Get.put<FFI>(_globalFFI, permanent: true);
 }
 
@@ -1566,9 +1528,6 @@ String translate(String name) {
   return platformFFI.translate(name, localeName);
 }
 
-// This function must be kept the same as the one in rust and sciter code.
-// rust: libs/hbb_common/src/config.rs -> option2bool()
-// sciter: Does not have the function, but it should be kept the same.
 bool option2bool(String option, String value) {
   bool res;
   if (option.startsWith("enable-")) {
@@ -1579,7 +1538,6 @@ bool option2bool(String option, String value) {
       option == kOptionForceAlwaysRelay) {
     res = value == "Y";
   } else {
-    // "" is true
     res = value != "N";
   }
   return res;
@@ -1628,10 +1586,6 @@ bool mainGetPeerBoolOptionSync(String id, String key) {
   return option2bool(key, bind.mainGetPeerOptionSync(id: id, key: key));
 }
 
-// Don't use `option2bool()` and `bool2option()` to convert the session option.
-// Use `sessionGetToggleOption()` and `sessionToggleOption()` instead.
-// Because all session options use `Y` and `<Empty>` as values.
-
 Future<bool> matchPeer(
     String searchText, Peer peer, PeerTabIndex peerTabIndex) async {
   if (searchText.isEmpty) {
@@ -1654,7 +1608,6 @@ Future<bool> matchPeer(
   return false;
 }
 
-/// Get the image for the current [platform].
 Widget getPlatformImage(String platform, {double size = 50}) {
   if (platform.isEmpty) {
     return Container(width: size, height: size);
@@ -1734,8 +1687,6 @@ typedef WindowKey = ({WindowType type, int? windowId});
 LastWindowPosition? _lastWindowPosition = null;
 final Debouncer _saveWindowDebounce = Debouncer(delay: Duration(seconds: 1));
 
-/// Save window position and size on exit
-/// Note that windowId must be provided if it's subwindow
 Future<void> saveWindowPosition(WindowType type,
     {int? windowId, bool? flush}) async {
   if (type != WindowType.Main && windowId == null) {
@@ -1763,11 +1714,6 @@ Future<void> saveWindowPosition(WindowType type,
 
   switch (type) {
     case WindowType.Main:
-      // Checking `bind.isIncomingOnly()` is a simple workaround for MacOS.
-      // `await windowManager.isMaximized()` will always return true
-      // if is not resizable. The reason is unknown.
-      //
-      // `setResizable(!bind.isIncomingOnly());` in main.dart
       isMaximized =
           bind.isIncomingOnly() ? false : await windowManager.isMaximized();
       if (isFullscreen || isMaximized) {
@@ -1823,7 +1769,6 @@ Future<void> saveWindowPosition(WindowType type,
     _lastWindowPosition = pos;
 
     if (flush ?? false) {
-      // If a previous update is pending, replace it.
       _saveWindowDebounce.cancel();
       await _saveWindowPositionActual(key);
     } else if (haveNewWindowPosition) {
@@ -1913,8 +1858,6 @@ Future<Size> _adjustRestoreMainWindowSize(double? width, double? height) async {
   return Size(restoreWidth, restoreHeight);
 }
 
-// Consider using Rect.contains() instead,
-// though the implementation is not exactly the same.
 bool isPointInRect(Offset point, Rect rect) {
   return point.dx >= rect.left &&
       point.dx <= rect.right &&
@@ -1922,7 +1865,6 @@ bool isPointInRect(Offset point, Rect rect) {
       point.dy <= rect.bottom;
 }
 
-/// return null means center
 Future<Offset?> _adjustRestoreMainWindowOffset(
   double? left,
   double? top,
@@ -1974,10 +1916,6 @@ Future<Offset?> _adjustRestoreMainWindowOffset(
   }
 }
 
-/// Restore window position and size on start
-/// Note that windowId must be provided if it's subwindow
-//
-// display is used to set the offset of the window in individual display mode.
 Future<bool> restoreWindowPosition(WindowType type,
     {int? windowId, String? peerId, int? display}) async {
   if (bind
@@ -1993,8 +1931,6 @@ Future<bool> restoreWindowPosition(WindowType type,
 
   bool isRemotePeerPos = false;
   String? pos;
-  // No need to check mainGetLocalBoolOptionSync(kOptionOpenNewConnInTabs)
-  // Though "open in tabs" is true and the new window restore peer position, it's ok.
   if ((type == WindowType.RemoteDesktop || type == WindowType.ViewCamera) &&
       windowId != null &&
       peerId != null) {
@@ -2012,18 +1948,11 @@ Future<bool> restoreWindowPosition(WindowType type,
     debugPrint("No window position saved, trying to center the window.");
     switch (type) {
       case WindowType.Main:
-        // Center the main window only if no position is saved (on first run).
         if (isWindows || isLinux) {
           await windowManager.center();
         }
-        // For MacOS, the window is already centered by default.
-        // See https://github.com/rustdesk/rustdesk/blob/9b9276e7524523d7f667fefcd0694d981443df0e/flutter/macos/Runner/Base.lproj/MainMenu.xib#L333
-        // If `<windowPositionMask>` in `<window>` is not set, the window will be centered.
         break;
       default:
-        // No need to change the position of a sub window if no position is saved,
-        // since the default position is already centered.
-        // https://github.com/rustdesk/rustdesk/blob/317639169359936f7f9f85ef445ec9774218772d/flutter/lib/utils/multi_window_manager.dart#L163
         break;
     }
     return true;
@@ -2076,11 +2005,6 @@ Future<bool> restoreWindowPosition(WindowType type,
         final storeSize = !bind.isIncomingOnly() || bind.isOutgoingOnly();
         if (isWindows) {
           if (storeSize) {
-            // We need to set the window size first to avoid the incorrect size in some special cases.
-            // E.g. There are two monitors, the left one is 100% DPI and the right one is 175% DPI.
-            // The window belongs to the left monitor, but if it is moved a little to the right, it will belong to the right monitor.
-            // After restoring, the size will be incorrect.
-            // See known issue in https://github.com/rustdesk/rustdesk/pull/9840
             await windowManager.setSize(size,
                 ignoreDevicePixelRatio: _ignoreDevicePixelRatio);
           }
@@ -2113,19 +2037,16 @@ Future<bool> restoreWindowPosition(WindowType type,
         if (!isMacOS) {
           await restoreFrame();
         }
-        // An duration is needed to avoid the window being restored after fullscreen.
         Future.delayed(Duration(milliseconds: 300), () async {
           if (kWindowId == windowId) {
             stateGlobal.setFullscreen(true);
           } else {
-            // If is not current window, we need to send a fullscreen message to `windowId`
             DesktopMultiWindow.invokeMethod(
                 windowId, kWindowEventSetFullscreen, 'true');
           }
         });
       } else if (lpos.isMaximized == true) {
         await restoreFrame();
-        // An duration is needed to avoid the window being restored after maximized.
         Future.delayed(Duration(milliseconds: 300), () async {
           await wc.maximize();
         });
@@ -2139,16 +2060,10 @@ Future<bool> restoreWindowPosition(WindowType type,
 
 var webInitialLink = "";
 
-/// Initialize uni links for macos/windows
-///
-/// [Availability]
-/// initUniLinks should only be used on macos/windows.
-/// we use dbus for linux currently.
 Future<bool> initUniLinks() async {
   if (isLinux) {
     return false;
   }
-  // check cold boot
   try {
     final initialLink = await getInitialLink();
     print("initialLink: $initialLink");
@@ -2167,11 +2082,6 @@ Future<bool> initUniLinks() async {
   }
 }
 
-/// Listen for uni links.
-///
-/// * handleByFlutter: Should uni links be handled by Flutter.
-///
-/// Returns a [StreamSubscription] which can listen the uni links.
 StreamSubscription? listenUniLinks({handleByFlutter = true}) {
   if (isLinux || isWeb) {
     return null;
@@ -2207,12 +2117,10 @@ setEnvTerminalAdmin() {
   bind.mainSetEnv(key: 'IS_TERMINAL_ADMIN', value: 'Y');
 }
 
-// uri link handler
 bool handleUriLink({List<String>? cmdArgs, Uri? uri, String? uriString}) {
   List<String>? args;
   if (cmdArgs != null && cmdArgs.isNotEmpty) {
     args = cmdArgs;
-    // rustdesk <uri link>
     if (args[0].startsWith(bind.mainUriPrefixSync())) {
       final uri = Uri.tryParse(args[0]);
       if (uri != null) {
@@ -2360,13 +2268,11 @@ List<String>? urlLinkToCmdArgs(Uri uri) {
       uri.path.split('').every((char) => char == '/')) {
     return [];
   } else if (uri.authority == "connection" && uri.path.startsWith("/new/")) {
-    // For compatibility
     command = '--connect';
     id = uri.path.substring("/new/".length);
   } else if (uri.authority == "config") {
     if (isAndroid || isIOS) {
       final config = uri.path.substring("/".length);
-      // add a timer to make showToast work
       Timer(Duration(seconds: 1), () {
         importConfig(null, null, config);
       });
@@ -2390,9 +2296,6 @@ List<String>? urlLinkToCmdArgs(Uri uri) {
   } else if (uri.authority.length > 2 &&
       (uri.path.length <= 1 ||
           (uri.path == '/r' || uri.path.startsWith('/r@')))) {
-    // rustdesk://<connect-id>
-    // rustdesk://<connect-id>/r
-    // rustdesk://<connect-id>/r@<server>
     command = '--connect';
     id = uri.authority;
     if (uri.path.length > 1) {
@@ -2414,7 +2317,6 @@ List<String>? urlLinkToCmdArgs(Uri uri) {
     final forceRelay = queryParameters["relay"] != null;
     final password = queryParameters["password"];
 
-    // Determine connection type based on command
     if (command == '--file-transfer') {
       connect(Get.context!, id,
           isFileTransfer: true, forceRelay: forceRelay, password: password);
@@ -2429,7 +2331,6 @@ List<String>? urlLinkToCmdArgs(Uri uri) {
       connect(Get.context!, id,
           isTerminal: true, forceRelay: forceRelay, password: password);
     } else {
-      // Default to remote desktop for '--connect', '--play', or direct connection
       connect(Get.context!, id, forceRelay: forceRelay, password: password);
     }
     return null;
@@ -2493,11 +2394,6 @@ connectMainDesktop(String id,
   }
 }
 
-/// Connect to a peer with [id].
-/// If [isFileTransfer], starts a session only for file transfer.
-/// If [isViewCamera], starts a session only for view camera.
-/// If [isTcpTunneling], starts a session only for tcp tunneling.
-/// If [isRDP], starts a session only for rdp.
 connect(BuildContext context, String id,
     {bool isFileTransfer = false,
     bool isViewCamera = false,
@@ -2668,36 +2564,21 @@ Map<String, String> getHttpHeaders() {
   };
 }
 
-// Simple wrapper of built-in types for reference use.
 class SimpleWrapper<T> {
   T value;
   SimpleWrapper(this.value);
 }
 
-/// Wakelock manager with reference counting for desktop.
-/// Ensures wakelock is only disabled when all sessions are closed/minimized.
-///
-/// Note: Each isolate has its own WakelockPlus instance with independent assertion.
-/// As long as one isolate has wakelock enabled, the screen stays awake.
-/// This manager handles multiple tabs within the same isolate.
 class WakelockManager {
   static final Set<UniqueKey> _enabledKeys = {};
-  // Don't use WakelockPlus.enabled, it causes error on Android:
-  // Unhandled Exception: FormatException: Message corrupted
-  //
-  // On Linux, multiple enable() calls create only one inhibit, but each disable()
-  // only releases if _cookie != null. So we need our own _enabled state to avoid
-  // calling disable() when not enabled.
-  // See: https://github.com/fluttercommunity/wakelock_plus/blob/0c74e5bbc6aefac57b6c96bb7ef987705ed559ec/wakelock_plus/lib/src/wakelock_plus_linux_plugin.dart#L48
   static bool _enabled = false;
 
   static void enable(UniqueKey key, {bool isServer = false}) {
-    // Check if we should keep awake during outgoing sessions
     if (!isServer) {
       final keepAwake =
           mainGetLocalBoolOptionSync(kOptionKeepAwakeDuringOutgoingSessions);
       if (!keepAwake) {
-        return; // Don't enable wakelock if user disabled keep awake
+        return;
       }
     }
     if (isDesktop) {
@@ -2723,13 +2604,8 @@ class WakelockManager {
   }
 }
 
-/// call this to reload current window.
-///
-/// [Note]
-/// Must have [RefreshWrapper] on the top of widget tree.
 void reloadCurrentWindow() {
   if (Get.context != null) {
-    // reload self window
     RefreshWrapper.of(Get.context!)?.rebuild();
   } else {
     debugPrint(
@@ -2737,7 +2613,6 @@ void reloadCurrentWindow() {
   }
 }
 
-/// call this to reload all windows, including main + all sub windows.
 Future<void> reloadAllWindows() async {
   reloadCurrentWindow();
   try {
@@ -2746,14 +2621,9 @@ Future<void> reloadAllWindows() async {
       DesktopMultiWindow.invokeMethod(id, kWindowActionRebuild);
     }
   } on AssertionError {
-    // ignore
   }
 }
 
-/// Indicate the flutter app is running in portable mode.
-///
-/// [Note]
-/// Portable build is only available on Windows.
 bool isRunningInPortableMode() {
   if (!isWindows) {
     return false;
@@ -2761,12 +2631,10 @@ bool isRunningInPortableMode() {
   return bool.hasEnvironment(kEnvPortableExecutable);
 }
 
-/// Window status callback
 Future<void> onActiveWindowChanged() async {
   print(
       "[MultiWindowHandler] active window changed: ${rustDeskWinManager.getActiveWindows()}");
   if (rustDeskWinManager.getActiveWindows().isEmpty) {
-    // close all sub windows
     try {
       if (isLinux) {
         await Future.wait([
@@ -2783,22 +2651,6 @@ Future<void> onActiveWindowChanged() async {
       await windowManager.setPreventClose(false);
       await windowManager.close();
       if (isMacOS) {
-        // If we call without delay, `flutter/macos/Runner/MainFlutterWindow.swift` can handle the "terminate" event.
-        // But the app will not close.
-        //
-        // No idea why we need to delay here, `terminate()` itself is also an async function.
-        //
-        // A quick workaround, use `Timer.periodic` to avoid the app not closing.
-        // Because `await windowManager.close()` and `RdPlatformChannel.instance.terminate()`
-        // may not work since `Flutter 3.24.4`, see the following logs.
-        // A delay will allow the app to close.
-        //
-        //```
-        // embedder.cc (2725): 'FlutterPlatformMessageCreateResponseHandle' returned 'kInvalidArguments'. Engine handle was invalid.
-        // 2024-11-11 11:41:11.546 RustDesk[90272:2567686] Failed to create a FlutterPlatformMessageResponseHandle (2)
-        // embedder.cc (2672): 'FlutterEngineSendPlatformMessage' returned 'kInvalidArguments'. Invalid engine handle.
-        // 2024-11-11 11:41:11.565 RustDesk[90272:2567686] Failed to send message to Flutter engine on channel 'flutter/lifecycle' (2).
-        // ```
         periodic_immediate(
             Duration(milliseconds: 30), RdPlatformChannel.instance.terminate);
       }
@@ -2813,7 +2665,6 @@ Timer periodic_immediate(Duration duration, Future<void> Function() callback) {
   });
 }
 
-/// return a human readable windows version
 WindowsTarget getWindowsTarget(int buildNumber) {
   if (!isWindows) {
     return WindowsTarget.naw;
@@ -2831,23 +2682,14 @@ WindowsTarget getWindowsTarget(int buildNumber) {
   } else if (buildNumber >= 6002) {
     return WindowsTarget.vista;
   } else {
-    // minimum support
     return WindowsTarget.xp;
   }
 }
 
-/// Get windows target build number.
-///
-/// [Note]
-/// Please use this function wrapped with `Platform.isWindows`.
 int getWindowsTargetBuildNumber() {
   return getWindowsTargetBuildNumber_();
 }
 
-/// Indicating we need to use compatible ui mode.
-///
-/// [Conditions]
-/// - Windows 7, window will overflow when we use frameless ui.
 bool get kUseCompatibleUiMode =>
     isWindows &&
     const [WindowsTarget.w7].contains(windowsBuildNumber.windowsVersion);
@@ -2868,13 +2710,9 @@ class ServerConfig {
     this.key = key?.trim() ?? '';
   }
 
-  /// decode from shared string (from user shared or rustdesk-server generated)
-  /// also see [encode]
-  /// throw when decoding failure
   ServerConfig.decode(String msg) {
     var json = {};
     try {
-      // back compatible
       json = jsonDecode(msg);
     } catch (err) {
       final input = msg.split('').reversed.join('');
@@ -2887,8 +2725,6 @@ class ServerConfig {
     key = json['key'] ?? '';
   }
 
-  /// encode to shared string
-  /// also see [ServerConfig.decode]
   String encode() {
     Map<String, String> config = {};
     config['host'] = idServer.trim();
@@ -2901,7 +2737,6 @@ class ServerConfig {
         .join();
   }
 
-  /// from local options
   ServerConfig.fromOptions(Map<String, dynamic> options)
       : idServer = options['custom-rendezvous-server'] ?? "",
         relayServer = options['relay-server'] ?? "",
@@ -2980,7 +2815,6 @@ String getWindowNameWithId(String id, {WindowType? overrideType}) {
 }
 
 Future<void> updateSystemWindowTheme() async {
-  // Set system window theme for macOS.
   final userPreference = MyTheme.getThemeModePreference();
   if (userPreference != ThemeMode.system) {
     if (isMacOS) {
@@ -2992,16 +2826,12 @@ Future<void> updateSystemWindowTheme() async {
   }
 }
 
-/// macOS only
-///
-/// Note: not found a general solution for rust based AVFoundation bingding.
-/// [AVFoundation] crate has compile error.
 const kMacOSPermChannel = MethodChannel("org.rustdesk.rustdesk/host");
 
 enum PermissionAuthorizeType {
   undetermined,
   authorized,
-  denied, // and restricted
+  denied,
 }
 
 Future<PermissionAuthorizeType> osxCanRecordAudio() async {
@@ -3063,7 +2893,6 @@ Future<void> start_service(bool is_start) async {
 }
 
 Future<bool> canBeBlocked() async {
-  // First check control permission
   final controlPermission = await bind.mainGetCommon(
       key: "is-remote-modify-enabled-by-control-permissions");
   if (controlPermission == "true") {
@@ -3072,7 +2901,6 @@ Future<bool> canBeBlocked() async {
     return true;
   }
 
-  // Check local settings
   var accessMode = await bind.mainGetOption(key: kOptionAccessMode);
   var isCustomAccessMode = accessMode != 'full' && accessMode != 'view';
   var option = option2bool(kOptionAllowRemoteConfigModification,
@@ -3080,7 +2908,6 @@ Future<bool> canBeBlocked() async {
   return accessMode == 'view' || (isCustomAccessMode && !option);
 }
 
-// to-do: web not implemented
 Future<void> shouldBeBlocked(RxBool block, WhetherUseRemoteBlock? use) async {
   if (use != null && !await use()) {
     block.value = false;
@@ -3110,9 +2937,7 @@ Widget buildRemoteBlock(
         },
         onExit: (event) => block.value = false,
         child: Stack(children: [
-          // scope block tab
           preventMouseKeyBuilder(child: child, block: block.value),
-          // mask block click, cm not block click and still use check_click_time to avoid block local click
           if (mask)
             Offstage(
                 offstage: !block.value,
@@ -3287,8 +3112,6 @@ Future<List<Rect>> getScreenListNotWayland() async {
   }
   try {
     for (var display in jsonDecode(displays) as List<dynamic>) {
-      // to-do: scale factor ?
-      // final scale = kIgnoreDpi ? 1.0 : screen.scaleFactor;
       double l = display['x'].toDouble();
       double t = display['y'].toDouble();
       double r = (display['x'] + display['w']).toDouble();
@@ -3312,13 +3135,6 @@ openMonitorInTheSameTab(int i, FFI ffi, PeerInfo pi,
   final displays = i == kAllDisplayValue
       ? List.generate(pi.displays.length, (index) => index)
       : [i];
-  // Try clear image model before switching from all displays
-  // 1. The remote side has multiple displays.
-  // 2. Do not use texture render.
-  // 3. Connect to Display 1.
-  // 4. Switch to multi-displays `kAllDisplayValue`
-  // 5. Switch to Display 2.
-  // Then the remote page will display last picture of Display 1 at the beginning.
   if (pi.forceTextureRender && i != kAllDisplayValue) {
     ffi.imageModel.clearImage();
   }
@@ -3331,10 +3147,6 @@ openMonitorInTheSameTab(int i, FFI ffi, PeerInfo pi,
       updateCursorPos: updateCursorPos);
 }
 
-// Open new tab or window to show this monitor.
-// For now just open new window.
-//
-// screenRect is used to move the new window to the specified screen and set fullscreen.
 openMonitorInNewTabOrWindow(int i, String peerId, PeerInfo pi,
     {Rect? screenRect}) {
   final args = {
@@ -3359,8 +3171,6 @@ openMonitorInNewTabOrWindow(int i, String peerId, PeerInfo pi,
 setNewConnectWindowFrame(int windowId, String peerId, int preSessionCount,
     WindowType windowType, int? display, Rect? screenRect) async {
   if (screenRect == null) {
-    // Do not restore window position to new connection if there's a pre-session.
-    // https://github.com/rustdesk/rustdesk/discussions/8825
     if (preSessionCount == 0) {
       await restoreWindowPosition(windowType,
           windowId: windowId, display: display, peerId: peerId);
@@ -3386,7 +3196,6 @@ tryMoveToScreenAndSetFullscreen(Rect? screenRect) async {
     return;
   }
   await wc.setFrame(frame);
-  // An duration is needed to avoid the window being restored after fullscreen.
   Future.delayed(Duration(milliseconds: 300), () async {
     stateGlobal.setFullscreen(true);
   });
@@ -3517,7 +3326,6 @@ Future<bool> setServerConfig(
     controllers[2].text = config.apiServer;
     controllers[3].text = config.key;
   }
-  // id
   if (config.idServer.isNotEmpty && errMsgs != null) {
     errMsgs[0].value = translate(await bind.mainTestIfValidServer(
         server: config.idServer, testWithProxy: true));
@@ -3525,7 +3333,6 @@ Future<bool> setServerConfig(
       return false;
     }
   }
-  // relay
   if (config.relayServer.isNotEmpty && errMsgs != null) {
     errMsgs[1].value = translate(await bind.mainTestIfValidServer(
         server: config.relayServer, testWithProxy: true));
@@ -3533,7 +3340,6 @@ Future<bool> setServerConfig(
       return false;
     }
   }
-  // api
   if (config.apiServer.isNotEmpty && errMsgs != null) {
     if (!config.apiServer.startsWith('http://') &&
         !config.apiServer.startsWith('https://')) {
@@ -3544,7 +3350,6 @@ Future<bool> setServerConfig(
   }
   final oldApiServer = await bind.mainGetApiServer();
 
-  // should set one by one
   await bind.mainSetOption(
       key: 'custom-rendezvous-server', value: config.idServer);
   await bind.mainSetOption(key: 'relay-server', value: config.relayServer);
@@ -3567,7 +3372,6 @@ ColorFilter? svgColor(Color? color) {
   }
 }
 
-// ignore: must_be_immutable
 class ComboBox extends StatelessWidget {
   late final List<String> keys;
   late final List<String> values;
@@ -3600,10 +3404,9 @@ class ComboBox extends StatelessWidget {
               ? MyTheme.color(context).border2 ?? MyTheme.border
               : MyTheme.border,
         ),
-        borderRadius:
-            BorderRadius.circular(8), //border raiuds of dropdown button
+        borderRadius: BorderRadius.circular(8),
       ),
-      height: 42, // should be the height of a TextField
+      height: 42,
       child: Obx(() => DropdownButton<String>(
             isExpanded: true,
             value: ref.value,
@@ -3671,7 +3474,6 @@ Widget loadPowered(BuildContext context) {
   ).marginOnly(top: 6);
 }
 
-// max 300 x 60
 Widget loadLogo() {
   return FutureBuilder<ByteData>(
       future: rootBundle.load('assets/logo.png'),
@@ -3735,8 +3537,7 @@ Widget _buildPresetPasswordWarning() {
           translate("Security Alert"),
           style: TextStyle(
             color: Colors.red,
-            fontSize:
-                18, // https://github.com/rustdesk/rustdesk-server-pro/issues/261
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         )).paddingOnly(bottom: 8),
@@ -3746,7 +3547,7 @@ Widget _buildPresetPasswordWarning() {
         )
       ],
     ).paddingAll(8),
-  ); // Show a warning message if the Future completed with true
+  );
 }
 
 Widget buildPresetPasswordWarningMobile() {
@@ -3762,21 +3563,18 @@ Widget buildPresetPasswordWarning() {
     future: bind.isPresetPassword(),
     builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator(); // Show a loading spinner while waiting for the Future to complete
+        return CircularProgressIndicator();
       } else if (snapshot.hasError) {
-        return Text(
-            'Error: ${snapshot.error}'); // Show an error message if the Future completed with an error
+        return Text('Error: ${snapshot.error}');
       } else if (snapshot.hasData && snapshot.data == true) {
         return _buildPresetPasswordWarning();
       } else {
-        return SizedBox
-            .shrink(); // Show nothing if the Future completed with false or null
+        return SizedBox.shrink();
       }
     },
   );
 }
 
-// https://github.com/leanflutter/window_manager/blob/87dd7a50b4cb47a375b9fc697f05e56eea0a2ab3/lib/src/widgets/virtual_window_frame.dart#L44
 Widget buildVirtualWindowFrame(BuildContext context, Widget child) {
   boxShadow() => isMainDesktopWindow
       ? <BoxShadow>[
@@ -3824,11 +3622,6 @@ Widget buildVirtualWindowFrame(BuildContext context, Widget child) {
 get windowResizeEdgeSize =>
     isLinux && !_linuxWindowResizable ? 0.0 : kWindowResizeEdgeSize;
 
-// `windowManager.setResizable(false)` will reset the window size to the default size on Linux and then set unresizable.
-// See _linuxWindowResizable for more details.
-// So we use `setResizable()` instead of `windowManager.setResizable()`.
-//
-// We can only call `windowManager.setResizable(false)` if we need the default size on Linux.
 setResizable(bool resizable) {
   if (isLinux) {
     _linuxWindowResizable = resizable;
@@ -3865,23 +3658,10 @@ get defaultOptionAccessMode => isCustomClient ? 'custom' : '';
 get defaultOptionApproveMode => isCustomClient ? 'password-click' : '';
 
 bool whitelistNotEmpty() {
-  // https://rustdesk.com/docs/en/self-host/client-configuration/advanced-settings/#whitelist
   final v = bind.mainGetOptionSync(key: kOptionWhitelist);
   return v != '' && v != ',';
 }
 
-// `setMovable()` is only supported on macOS.
-//
-// On macOS, the window can be dragged by the tab bar by default.
-// We need to disable the movable feature to prevent the window from being dragged by the tabs in the tab bar.
-//
-// When we drag the blank tab bar (not the tab), the window will be dragged normally by adding the `onPanStart` handle.
-//
-// See the following code for more details:
-// https://github.com/rustdesk/rustdesk/blob/ce1dac3b8613596b4d8ae981275f9335489eb935/flutter/lib/desktop/widgets/tabbar_widget.dart#L385
-// https://github.com/rustdesk/rustdesk/blob/ce1dac3b8613596b4d8ae981275f9335489eb935/flutter/lib/desktop/widgets/tabbar_widget.dart#L399
-//
-// @platforms macos
 disableWindowMovable(int? windowId) {
   if (!isMacOS) {
     return;
@@ -3948,11 +3728,8 @@ void checkUpdate() {
   }
 }
 
-// https://github.com/flutter/flutter/issues/153560#issuecomment-2497160535
-// For TextField, TextFormField
 extension WorkaroundFreezeLinuxMint on Widget {
   Widget workaroundFreezeLinuxMint() {
-    // No need to check if is Linux Mint, because this workaround is harmless on other platforms.
     if (isLinux) {
       return ExcludeSemantics(child: this);
     } else {
@@ -3961,7 +3738,6 @@ extension WorkaroundFreezeLinuxMint on Widget {
   }
 }
 
-// Don't use `extension` here, the border looks weird if using `extension` in my test.
 Widget workaroundWindowBorder(BuildContext context, Widget child) {
   if (!isWin10) {
     return child;
@@ -4019,11 +3795,9 @@ Widget workaroundWindowBorder(BuildContext context, Widget child) {
 
 void updateTextAndPreserveSelection(
     TextEditingController controller, String text) {
-  // Only care about select all for now.
   final isSelected = controller.selection.isValid &&
       controller.selection.end > controller.selection.start;
 
-  // Set text will make the selection invalid.
   controller.text = text;
 
   if (isSelected) {
@@ -4081,11 +3855,9 @@ String getConnectionText(bool secure, bool direct, String streamType) {
 
 String decode_http_response(http.Response resp) {
   try {
-    // https://github.com/rustdesk/rustdesk-server-pro/discussions/758
     return utf8.decode(resp.bodyBytes, allowMalformed: true);
   } catch (e) {
     debugPrint('Failed to decode response as UTF-8: $e');
-    // Fallback to bodyString which handles encoding automatically
     return resp.body;
   }
 }
@@ -4094,9 +3866,6 @@ bool peerTabShowNote(PeerTabIndex peerTabIndex) {
   return peerTabIndex == PeerTabIndex.ab || peerTabIndex == PeerTabIndex.group;
 }
 
-// TODO: We should support individual bits combinations in the future.
-// But for now, just keep it simple, because the old code only supports single button.
-// No users have requested multi-button support yet.
 String mouseButtonsToPeer(int buttons) {
   switch (buttons) {
     case kPrimaryMouseButton:
