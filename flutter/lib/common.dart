@@ -3712,6 +3712,7 @@ void earlyAssert() {
 }
 
 void checkUpdate() {
+  stateGlobal.updateUrl.value = '';
   return;
 }
 
