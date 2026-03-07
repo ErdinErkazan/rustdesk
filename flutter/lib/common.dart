@@ -2909,7 +2909,7 @@ class ServerConfig {
         key = options['key'] ?? "";
 }
 
-Widget dialogButton(String text,a
+Widget dialogButton(String text,
     {required VoidCallback? onPressed,
     bool isOutline = false,
     Widget? icon,
