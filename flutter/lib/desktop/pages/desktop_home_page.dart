@@ -429,7 +429,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     );
   }
 
-  Widget buildHelpCards(String updateUrl) {
+ Widget buildHelpCards(String updateUrl) {
+  return const SizedBox.shrink();
+}
     final shouldHideUpdateCard = !bind.isCustomClient() &&
         updateUrl.isNotEmpty &&
         !isCardClosed &&
