@@ -95,6 +95,7 @@ fn start_auto_update_check_(rx_msg: Receiver<UpdateMsg>) {
         let recv_res = rx_msg.recv_timeout(check_interval);
         match &recv_res {
             Ok(UpdateMsg::CheckUpdate) | Err(_) => {
+                 continue;
                 if last_check_time.elapsed() < MIN_INTERVAL {
                     // log::debug!("Update check skipped due to minimum interval.");
                     continue;
