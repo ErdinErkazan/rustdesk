@@ -76,11 +76,11 @@ fn has_no_controlling_conns() -> bool {
 }
 
 fn start_auto_update_check() -> Sender<UpdateMsg> {
-    let (tx, _rx) = channel();
-    return tx; // güncelleme kontrolü devre dışı
+    let (tx, rx) = channel();
+    std::thread::spawn(move || start_auto_update_check_(rx));
+    return tx;
 }
 
-#[allow(dead_code)]
 fn start_auto_update_check_(rx_msg: Receiver<UpdateMsg>) {
     std::thread::sleep(Duration::from_secs(30));
     if let Err(e) = check_update(false) {
@@ -96,8 +96,10 @@ fn start_auto_update_check_(rx_msg: Receiver<UpdateMsg>) {
         match &recv_res {
             Ok(UpdateMsg::CheckUpdate) | Err(_) => {
                 if last_check_time.elapsed() < MIN_INTERVAL {
+                    // log::debug!("Update check skipped due to minimum interval.");
                     continue;
                 }
+                // Don't check update if there are alive connections.
                 if !has_no_active_conns() {
                     check_interval = RETRY_INTERVAL;
                     continue;
@@ -122,6 +124,7 @@ fn check_update(manually: bool) -> ResultType<()> {
         return Ok(());
     }
     if do_check_software_update().is_err() {
+        // ignore
         return Ok(());
     }
 
@@ -149,6 +152,8 @@ fn check_update(manually: bool) -> ResultType<()> {
         };
         let mut is_file_exists = false;
         if file_path.exists() {
+            // Check if the file size is the same as the server file size
+            // If the file size is the same, we don't need to download it again.
             let file_size = std::fs::metadata(&file_path)?.len();
             let response = client.head(&download_url).send()?;
             if !response.status().is_success() {
@@ -180,6 +185,9 @@ fn check_update(manually: bool) -> ResultType<()> {
             let mut file = std::fs::File::create(&file_path)?;
             file.write_all(&file_data)?;
         }
+        // We have checked if the `conns` is empty before, but we need to check again.
+        // No need to care about the downloaded file here, because it's rare case that the `conns` are empty
+        // before the download, but not empty after the download.
         if has_no_active_conns() {
             #[cfg(target_os = "windows")]
             update_new_version(is_msi, &version, &file_path);
@@ -231,6 +239,7 @@ fn update_new_version(is_msi: bool, version: &str, file_path: &PathBuf) {
             );
         }
     } else {
+        // unreachable!()
         log::error!(
             "Failed to convert the file path to string: {}",
             file_path.display()
