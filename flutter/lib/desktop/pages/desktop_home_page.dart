@@ -51,6 +51,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Timer? _updateTimer;
   bool isCardClosed = false;
 
+  // Sol tarafta update/install/service/permission gibi yardım kartlarını tamamen kapatır.
+  // Tekrar açmak istersen false yap.
+  bool disableHelpCards = true;
+
   final RxBool _editHover = false.obs;
   final RxBool _block = false.obs;
 
@@ -430,6 +434,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Widget buildHelpCards(String updateUrl) {
+    if (disableHelpCards) {
+      return Container();
+    }
+
     if (!bind.isCustomClient() &&
         updateUrl.isNotEmpty &&
         !isCardClosed &&
@@ -560,8 +568,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         alignment: Alignment.centerRight,
         child: OutlinedButton(
           onPressed: () {
-            SystemNavigator.pop(); // Close the application
-            // https://github.com/flutter/flutter/issues/66631
+            SystemNavigator.pop();
             if (isWindows) {
               exit(0);
             }
@@ -724,10 +731,6 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       if (watchIsInputMonitoring) {
         if (bind.mainIsCanInputMonitoring(prompt: false)) {
           watchIsInputMonitoring = false;
-          // Do not notify for now.
-          // Monitoring may not take effect until the process is restarted.
-          // rustDeskWinManager.call(
-          //     WindowType.RemoteDesktop, kWindowDisableGrabKeyboard, '');
           setState(() {});
         }
       }
@@ -767,7 +770,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
     bool isChattyMethod(String methodName) {
       switch (methodName) {
-        case kWindowBumpMouse: return true;
+        case kWindowBumpMouse:
+          return true;
       }
 
       return false;
@@ -776,7 +780,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     rustDeskWinManager.setMethodHandler((call, fromWindowId) async {
       if (!isChattyMethod(call.method)) {
         debugPrint(
-          "[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
+            "[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
       }
       if (call.method == kWindowMainWindowOnTop) {
         windowOnTop(null);
