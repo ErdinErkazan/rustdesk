@@ -74,6 +74,33 @@ jobs:
           cd flutter
           flutter build windows --release
 
+      - name: Replace built librustdesk.dll with known-good DLL
+        shell: powershell
+        run: |
+          $sourceDll = ".\third_party\windows\librustdesk.dll"
+          $targetDir = ".\flutter\build\windows\x64\runner\Release"
+          $targetDll = Join-Path $targetDir "librustdesk.dll"
+
+          if (!(Test-Path $sourceDll)) {
+            Write-Error "Known-good DLL not found: $sourceDll"
+            exit 1
+          }
+
+          if (!(Test-Path $targetDir)) {
+            Write-Error "Release directory not found: $targetDir"
+            exit 1
+          }
+
+          Copy-Item $sourceDll $targetDll -Force
+
+          Write-Host "Replaced DLL successfully:"
+          Get-Item $targetDll | Format-Table FullName, Length, LastWriteTime
+
+      - name: Show final release files
+        shell: powershell
+        run: |
+          Get-ChildItem -Path .\flutter\build\windows\x64\runner\Release | Format-Table Name, Length
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
