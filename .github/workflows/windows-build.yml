@@ -74,8 +74,8 @@ jobs:
           cd flutter
           flutter build windows --release
 
-      - name: Upload EXE Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PdRemote-Windows-EXE
-          path: flutter/build/windows/x64/runner/Release/*.exe
+          path: flutter/build/windows/x64/runner/Release/
