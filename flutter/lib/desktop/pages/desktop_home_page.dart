@@ -152,19 +152,20 @@ class _DesktopHomePageState extends State<DesktopHomePage>
               ],
             ),
              Positioned(
-              left: 0,
-              right: 0,
-              bottom: 18,
-              child: IgnorePointer(
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/prodev-200x74.png',
-                    width: 140,
-                    fit: BoxFit.contain,
+                left: 20,
+                right: 20,
+                bottom: 40,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: 0.95,
+                    child: Image.asset(
+                      'assets/images/prodev-200x74.png',
+                      height: 40,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
-            ),
             if (isOutgoingOnly)
               Positioned(
                 bottom: 6,
