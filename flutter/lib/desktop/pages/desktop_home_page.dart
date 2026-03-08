@@ -148,19 +148,22 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                     children: children,
                   ),
                 ),
-               Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Image.asset(
-                        'assets/images/prodev-200x74.png',
-                        width: 120,
-                      ),
-                    ),
-                  ),
-                )
+               Expanded(child: Container()),
               ],
+            ),
+             Positioned(
+              left: 0,
+              right: 0,
+              bottom: 18,
+              child: IgnorePointer(
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/prodev-200x74.png',
+                    width: 140,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
             ),
             if (isOutgoingOnly)
               Positioned(
@@ -191,6 +194,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
               )
           ],
         ),
+        
+        
       ),
     );
   }
