@@ -201,7 +201,7 @@ const String kOptionShowMobileAction = "showMobileActions";
 
 const String kUrlActionClose = "close";
 
-const String kTabLabelHomePage = "Home";
+const String kTabLabelHomePage = "Home ✓";//const String kTabLabelHomePage = "Home";
 const String kTabLabelSettingPage = "Settings";
 
 const String kWindowPrefix = "wm_";
