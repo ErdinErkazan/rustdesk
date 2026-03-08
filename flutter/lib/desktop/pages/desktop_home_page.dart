@@ -148,18 +148,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                     children: children,
                   ),
                 ),
-                Expanded(
+               Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
-                      child: SvgPicture.asset(
+                      child: Image.asset(
                         'assets/images/prodev-200x74.png',
                         width: 120,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white70,
-                          BlendMode.srcIn,
-                        ),
                       ),
                     ),
                   ),
