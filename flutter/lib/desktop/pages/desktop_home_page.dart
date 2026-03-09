@@ -137,7 +137,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       child: Container(
         width: isIncomingOnly ? 280.0 : 200.0,
         color: Theme.of(context).colorScheme.background,
-        child: Stack(
+      child: Stack(
           children: [
             Column(
               children: [
@@ -148,60 +148,39 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                     children: children,
                   ),
                 ),
-               Expanded(child: Container()),
+                Expanded(child: Container()),
               ],
             ),
-             Positioned(Positioned(
-                left: 0,
-                right: 0,
-                bottom: 18,
-                child: IgnorePointer(
-                  child: Center(
-                    child: SizedBox(
-                      width: 160,
-                      height: 60,
-                      child: Image.asset(
-                        'assets/images/prodev-200x74.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.red,
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Logo load error',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 18,
+              child: IgnorePointer(
+                child: Center(
+                  child: SizedBox(
+                    width: 160,
+                    height: 60,
+                    child: Image.asset(
+                      'assets/images/prodev-200x74.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.red,
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Logo load error',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
               ),
-                left: 0,
-                right: 0,
-                bottom: 18,
-                child: IgnorePointer(
-                  child: Center(
-                    child: Container(
-                      width: 160,
-                      height: 60,
-                      color: Colors.red,
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'www.prodev.com.tr',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            ),
             if (isOutgoingOnly)
               Positioned(
                 bottom: 6,
@@ -222,13 +201,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                       if (DesktopSettingPage.tabKeys.isNotEmpty)
                         {
                           DesktopSettingPage.switch2page(
-                              DesktopSettingPage.tabKeys[0])
+                            DesktopSettingPage.tabKeys[0],
+                          )
                         }
                     },
                     onHover: (value) => _editHover.value = value,
                   ),
                 ),
-              )
+              ),
           ],
         ),
         
