@@ -151,7 +151,36 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                Expanded(child: Container()),
               ],
             ),
-             Positioned(
+             Positioned(Positioned(
+                left: 0,
+                right: 0,
+                bottom: 18,
+                child: IgnorePointer(
+                  child: Center(
+                    child: SizedBox(
+                      width: 160,
+                      height: 60,
+                      child: Image.asset(
+                        'assets/images/prodev-200x74.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.red,
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Logo load error',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
                 left: 0,
                 right: 0,
                 bottom: 18,
