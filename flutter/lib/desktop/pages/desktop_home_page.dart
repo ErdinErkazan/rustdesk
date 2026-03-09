@@ -152,16 +152,23 @@ class _DesktopHomePageState extends State<DesktopHomePage>
               ],
             ),
              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 40,
+                left: 0,
+                right: 0,
+                bottom: 18,
                 child: IgnorePointer(
-                  child: Opacity(
-                    opacity: 0.95,
-                    child: Image.asset(
-                      'assets/images/prodev-200x74.png',
-                      height: 40,
-                      fit: BoxFit.contain,
+                  child: Center(
+                    child: Container(
+                      width: 160,
+                      height: 60,
+                      color: Colors.red,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'www.prodev.com.tr',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
