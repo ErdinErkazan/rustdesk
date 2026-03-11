@@ -10,7 +10,7 @@ call "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\Tools\V
 if errorlevel 1 goto :fail
 
 set "PROJECT_ROOT=D:\dev\rustdesk"
-set "FLUTTER_ROOT=C:\src\flutter3245\flutter"
+set "FLUTTER_ROOT=C:\src\flutter_3_24_5\flutter"
 set "VCPKG_ROOT=C:\vcpkg"
 set "PATH=%FLUTTER_ROOT%\bin;%PATH%"
 

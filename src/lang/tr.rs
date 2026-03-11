@@ -429,6 +429,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Strong", "Güçlü"),
         ("Switch Sides", "Tarafları Değiştir"),
         ("Please confirm if you want to share your desktop?", "Masaüstünüzü paylaşmak isteyip istemediğinizi onaylayın?"),
+        ("verify_rustdesk_password_tip", "PdRemote parolasını doğrulayın"),
         ("Display", "Görüntüle"),
         ("Default View Style", "Varsayılan Görünüm Stili"),
         ("Default Scroll Style", "Varsayılan Kaydırma Stili"),
