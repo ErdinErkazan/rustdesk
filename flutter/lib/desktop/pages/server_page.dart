@@ -1016,7 +1016,7 @@ class _CmControlPanel extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Offstage(
+        /* Offstage(
           offstage: !showElevation || !showAccept,
           child: buildButton(context, color: Colors.green[700], onClick: () {
             handleAccept(context);
@@ -1031,7 +1031,7 @@ class _CmControlPanel extends StatelessWidget {
               ),
               textColor: Colors.white,
               tooltip: 'accept_and_elevate_btn_tooltip'),
-        ),
+        ), */
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

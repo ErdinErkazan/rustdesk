@@ -1000,10 +1000,15 @@ pub async fn do_check_software_update() -> hbb_common::ResultType<()> {
     Ok(())
 }
 
-#[inline]
+/*  #[inline]
 pub fn get_app_name() -> String {
     hbb_common::config::APP_NAME.read().unwrap().clone()
-}
+}  */
+
+ #[inline]
+pub fn get_app_name() -> String {
+   "PdRemote".to_string()
+} 
 
 #[inline]
 pub fn is_rustdesk() -> bool {
